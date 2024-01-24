@@ -1,0 +1,18 @@
+---
+
+- hosts: web_servers
+  become: true
+  tasks:
+
+    - name: change email for admin (CentOS)
+      lineinfile:
+        path: /etc/httpd/conf/httpd.conf
+        regexp: '^ServerAdmin'
+        line: ServerAdmin somebody@somwehere.in
+      when: ansible_distribution == "CentOS"
+      register: httpd
+    - name: restart httpd (CentOS)
+      service: 
+        name: httpd
+        state: restarted
+      when: httpd.changed
